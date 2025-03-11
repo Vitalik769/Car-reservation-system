@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Список автомобілів</title>
+    <h:outputStylesheet name="styles.css"/>
+</h:head>
+
+<h:body>
+    <div class="container">
+        <!-- ✅ Форма для додавання нового авто -->
+        <h:form id="addCarForm">
+            <p:panel header="Додавання нового авто">
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Марка:" for="brand"/>
+                    <p:inputText id="brand" value="#{carBean.newCar.brand}" required="true"/>
+
+                    <p:outputLabel value="Модель:" for="model"/>
+                    <p:inputText id="model" value="#{carBean.newCar.model}" required="true"/>
+
+                    <p:outputLabel value="Рік випуску:" for="year"/>
+                    <p:inputText id="year" value="#{carBean.newCar.year}" required="true"/>
+
+                    <p:outputLabel value="Ціна за день:" for="price"/>
+                    <p:inputText id="price" value="#{carBean.newCar.pricePerDay}" required="true"/>
+
+                    <p:outputLabel value="Статус:" for="status"/>
+                    <p:selectOneMenu id="status" value="#{carBean.newCar.status}" required="true">
+                        <f:selectItem itemLabel="Доступний" itemValue="available"/>
+                        <f:selectItem itemLabel="Заброньований" itemValue="rented"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <p:commandButton value="Додати авто"
+                                 actionListener="#{carBean.addCar}"
+                                 update="carsTable addCarForm"
+                                 ajax="true"/>
+            </p:panel>
+        </h:form>
+
+        <!-- ✅ Таблиця з авто -->
+        <h:form id="carsTableForm">
+            <p:dataTable id="carsTable" var="car" value="#{carBean.cars}" paginator="true" rows="10"
+                         selectionMode="single" rowKey="#{car.id}" selection="#{carBean.selectedCar}">
+                <p:column headerText="ID">
+                    <h:outputText value="#{car.id}"/>
+                </p:column>
+                <p:column headerText="Марка">
+                    <h:outputText value="#{car.brand}"/>
+                </p:column>
+                <p:column headerText="Модель">
+                    <h:outputText value="#{car.model}"/>
+                </p:column>
+                <p:column headerText="Рік">
+                    <h:outputText value="#{car.year}"/>
+                </p:column>
+                <p:column headerText="Ціна за день">
+                    <h:outputText value="#{car.pricePerDay}"/>
+                </p:column>
+                <p:column headerText="Статус">
+                    <p:badge value="#{car.status}" severity="#{car.status eq 'available' ? 'success' : 'warning'}"/>
+                </p:column>
+                <p:column headerText="Дії">
+                    <!-- ✅ Кнопка для редагування -->
+                    <p:commandButton icon="pi pi-pencil"
+                                     actionListener="#{carBean.openEditDialog(car)}"
+                                     update="editCarDialog"
+                                     oncomplete="PF('editCarDialogWidget').show()"/>
+                    <!-- ✅ Кнопка для видалення -->
+                    <p:commandButton icon="pi pi-trash"
+                                     actionListener="#{carBean.deleteCar(car.id)}"
+                                     update="carsTable"
+                                     style="margin-left: 10px;"
+                                     onclick="return confirm('Ви впевнені, що хочете видалити це авто?')"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <!-- ✅ Діалогове вікно для редагування авто -->
+        <p:dialog id="editCarDialog" widgetVar="editCarDialogWidget" header="Редагування авто" modal="true">
+            <h:form id="editCarForm">
+                <p:panelGrid columns="2">
+                    <p:outputLabel for="brandEdit" value="Марка:" />
+                    <p:inputText id="brandEdit" value="#{carBean.selectedCar.brand}" required="true"/>
+
+                    <p:outputLabel for="modelEdit" value="Модель:" />
+                    <p:inputText id="modelEdit" value="#{carBean.selectedCar.model}" required="true"/>
+
+                    <p:outputLabel for="yearEdit" value="Рік випуску:" />
+                    <p:inputText id="yearEdit" value="#{carBean.selectedCar.year}" required="true"/>
+
+                    <p:outputLabel for="priceEdit" value="Ціна за день:" />
+                    <p:inputText id="priceEdit" value="#{carBean.selectedCar.pricePerDay}" required="true"/>
+
+                    <p:outputLabel for="statusEdit" value="Статус:" />
+                    <p:selectOneMenu id="statusEdit" value="#{carBean.selectedCar.status}">
+                        <f:selectItem itemLabel="Доступний" itemValue="available"/>
+                        <f:selectItem itemLabel="Заброньований" itemValue="rented"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
+
+                <p:commandButton value="Зберегти"
+                                 actionListener="#{carBean.updateCar}"
+                                 update="carsTable editCarDialog"
+                                 oncomplete="PF('editCarDialogWidget').hide()"/>
+            </h:form>
+        </p:dialog>
+    </div>
+</h:body>
+
+</html>

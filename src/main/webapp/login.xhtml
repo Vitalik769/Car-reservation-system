@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <meta charset="UTF-8"/>
+    <title>Вхід до системи</title>
+    <h:outputStylesheet name="styles.css"/>
+</h:head>
+<h:body>
+    <h:form>
+        <p:growl id="growl" showDetail="true" life="3000"/>
+
+        <p:panel header="Вхід до системи" styleClass="login-panel">
+            <p:messages id="messages" showDetail="true" autoUpdate="true"/>
+
+            <p:outputLabel for="username" value="Ім'я користувача:" />
+            <p:inputText id="username" value="#{authBean.username}" required="true"
+                         placeholder="Введіть ім'я користувача" styleClass="input-field" />
+
+            <p:outputLabel for="password" value="Пароль:" />
+            <p:password id="password" value="#{authBean.password}" required="true"
+                        placeholder="Введіть пароль" styleClass="input-field" />
+
+            <p:commandButton value="Увійти" action="#{authBean.login}" icon="pi pi-sign-in"
+                             styleClass="login-button" update="growl messages"/>
+        </p:panel>
+    </h:form>
+</h:body>
+</html>
